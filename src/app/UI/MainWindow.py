@@ -1,31 +1,28 @@
-import pyforms
 from pyforms.basewidget import BaseWidget
-from pyforms.controls import ControlText
 from pyforms.controls import ControlButton
-from win32api import GetSystemMetrics
+from pyforms.controls import ControlText
 
 
 class MainWindow(BaseWidget):
 
     def __init__(self):
         super(MainWindow, self).__init__('MainWindow')
+        self.setWindowTitle('mathsYNX Classic Calculator')
+        self.setFixedHeight(400)
+        self.setFixedWidth(320)
+        self.set_margin(10)
 
-        MainWindow.setWindowTitle(self, 'mathsYNX Classic Calculator')
-        MainWindow.setFixedHeight(self, 400)
-        MainWindow.setFixedWidth(self, 320)
-        MainWindow.set_margin(self, 10)
-
-
+        # Text input handling
         self._input = ControlText('')
         self._input.value = '0'
         self.processed_input = ''
-        print(int(GetSystemMetrics(0)/2))
-        print(int(GetSystemMetrics(1)/2))
+        self.previous_calculation = None
 
         # Controls buttons
         self._AC = ControlButton('AC')
         self._AC.value = self._allClear
         self._equals = ControlButton('=')
+        self._equals.value = self._result
 
         # Numeric buttons
         self._zero = ControlButton('0')
@@ -51,12 +48,17 @@ class MainWindow(BaseWidget):
 
         # Operators buttons
         self._plus = ControlButton('+')
-        self._plus.value = self._addition
+        self._plus.value = lambda: self._operatorAction(self._plus)
         self._minus = ControlButton('-')
+        self._minus.value = lambda: self._operatorAction(self._minus)
         self._multiply = ControlButton('*')
+        self._multiply.value = lambda: self._operatorAction(self._multiply)
         self._divide = ControlButton('/')
+        self._divide.value = lambda: self._operatorAction(self._divide)
         self._squared = ControlButton('^2')
+        self._squared.value = lambda: self._operatorAction(self._squared)
         self._power = ControlButton('^')
+        self._power.value = lambda: self._operatorAction(self._power)
 
         self.formset = [
             '_input',
@@ -82,23 +84,24 @@ class MainWindow(BaseWidget):
             new_str = self._input.value + button.label
         self._input.value = new_str
 
+    def _operatorAction(self, button):
+        """Operator buttons action event"""
+        if self._input.value[0] == '0':
+            new_str = self._input.value
+        else:
+            new_str = self._input.value + ' ' + button.label + ' '
+        self._input.value = new_str
+
     def _allClear(self):
         """Clear all inputs"""
         self._input.value = '0'
         self.processed_input = ''
+        self.previous_calculation = None
 
-    def _addition(self):
-        if self._input.value[0] == '0':
-            new_str = self._input.value
-        else:
-            new_str = self._input.value + ' ' + self._plus.label + ' '
-        self._input.value = new_str
-
-
-# Execute the application
-if __name__ == "__main__":
-    pyforms.start_app(MainWindow,
-                      geometry=(int(GetSystemMetrics(0)/2)-160,
-                                int(GetSystemMetrics(1)/2)-200,
-                                320,
-                                400))
+    def _result(self):
+        """Calculation result of the input"""
+        self.processed_input = self._input.value.replace('^', '**')
+        try:
+            self._input.value = str(eval(self.processed_input))
+        except SyntaxError as se:
+            print(se.msg)
