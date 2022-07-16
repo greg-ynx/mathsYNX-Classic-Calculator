@@ -2,7 +2,7 @@ import pyforms
 from pyforms.basewidget import BaseWidget
 from pyforms.controls import ControlText
 from pyforms.controls import ControlButton
-from PyQt5 import QtCore
+from win32api import GetSystemMetrics
 
 
 class MainWindow(BaseWidget):
@@ -15,9 +15,12 @@ class MainWindow(BaseWidget):
         MainWindow.setFixedWidth(self, 320)
         MainWindow.set_margin(self, 10)
 
+
         self._input = ControlText('')
         self._input.value = '0'
         self.processed_input = ''
+        print(int(GetSystemMetrics(0)/2))
+        print(int(GetSystemMetrics(1)/2))
 
         # Controls buttons
         self._AC = ControlButton('AC')
@@ -48,6 +51,7 @@ class MainWindow(BaseWidget):
 
         # Operators buttons
         self._plus = ControlButton('+')
+        self._plus.value = self._addition
         self._minus = ControlButton('-')
         self._multiply = ControlButton('*')
         self._divide = ControlButton('/')
@@ -71,7 +75,7 @@ class MainWindow(BaseWidget):
         ]
 
     def _numericAction(self, button):
-        """Numeric button action event"""
+        """Numeric buttons action event"""
         if self._input.value[0] == '0':
             new_str = button.label
         else:
@@ -79,10 +83,22 @@ class MainWindow(BaseWidget):
         self._input.value = new_str
 
     def _allClear(self):
+        """Clear all inputs"""
         self._input.value = '0'
         self.processed_input = ''
+
+    def _addition(self):
+        if self._input.value[0] == '0':
+            new_str = self._input.value
+        else:
+            new_str = self._input.value + ' ' + self._plus.label + ' '
+        self._input.value = new_str
 
 
 # Execute the application
 if __name__ == "__main__":
-    pyforms.start_app(MainWindow)
+    pyforms.start_app(MainWindow,
+                      geometry=(int(GetSystemMetrics(0)/2)-160,
+                                int(GetSystemMetrics(1)/2)-200,
+                                320,
+                                400))
