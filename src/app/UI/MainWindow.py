@@ -104,4 +104,5 @@ class MainWindow(BaseWidget):
         try:
             self._input.value = str(eval(self.processed_input))
         except SyntaxError as se:
+            self._allClear()
             print(se.msg)
