@@ -1,0 +1,2 @@
+PyForms-GUI~=5
+pywin32~=304

@@ -1,6 +1,5 @@
-from pyforms import start_app
+from pyforms_gui.appmanager import start_app
 from win32api import GetSystemMetrics
-
 from src.app.UI.MainWindow import MainWindow
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
-from pyforms.basewidget import BaseWidget
-from pyforms.controls import ControlButton
-from pyforms.controls import ControlText
+from pyforms_gui.basewidget import BaseWidget
+from pyforms_gui.controls.control_button import ControlButton
+from pyforms_gui.controls.control_text import ControlText
 
 
 class MainWindow(BaseWidget):
